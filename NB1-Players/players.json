@@ -1,0 +1,112 @@
+[
+  {
+    "Id": 1,
+    "Name": "Dibusz Dénes",
+    "Age": 32,
+    "Position": "Kapus",
+    "Team": "Ferencváros",
+    "Value": 3000000,
+    "ContractUntil": "2026-06-30T00:00:00",
+    "IsNationalTeamPlayer": true,
+    "Nationality": "Magyar"
+  },
+  {
+    "Id": 2,
+    "Name": "Botka Endre",
+    "Age": 29,
+    "Position": "Hátvéd",
+    "Team": "Ferencváros",
+    "Value": 1500000,
+    "ContractUntil": "2025-06-30T00:00:00",
+    "IsNationalTeamPlayer": true,
+    "Nationality": "Magyar"
+  },
+  {
+    "Id": 3,
+    "Name": "Cissé Mama",
+    "Age": 28,
+    "Position": "Hátvéd",
+    "Team": "Ferencváros",
+    "Value": 1200000,
+    "ContractUntil": "2025-06-30T00:00:00",
+    "IsNationalTeamPlayer": false,
+    "Nationality": "Szenegáli"
+  },
+  {
+    "Id": 4,
+    "Name": "Nagy Ádám",
+    "Age": 33,
+    "Position": "Kapus",
+    "Team": "Puskás Akadémia",
+    "Value": 800000,
+    "ContractUntil": "2024-06-30T00:00:00",
+    "IsNationalTeamPlayer": false,
+    "Nationality": "Magyar"
+  },
+  {
+    "Id": 5,
+    "Name": "Bárány Donát",
+    "Age": 21,
+    "Position": "Csatár",
+    "Team": "Debrecen",
+    "Value": 1500000,
+    "ContractUntil": "2026-06-30T00:00:00",
+    "IsNationalTeamPlayer": false,
+    "Nationality": "Magyar"
+  },
+  {
+    "Id": 6,
+    "Name": "Szappanos Péter",
+    "Age": 32,
+    "Position": "Kapus",
+    "Team": "Paks",
+    "Value": 500000,
+    "ContractUntil": "2024-06-30T00:00:00",
+    "IsNationalTeamPlayer": false,
+    "Nationality": "Magyar"
+  },
+  {
+    "Id": 7,
+    "Name": "Gyurján Iván",
+    "Age": 25,
+    "Position": "Kapus",
+    "Team": "Kisvárda",
+    "Value": 600000,
+    "ContractUntil": "2025-06-30T00:00:00",
+    "IsNationalTeamPlayer": false,
+    "Nationality": "Magyar"
+  },
+  {
+    "Id": 8,
+    "Name": "Bukrán Dávid",
+    "Age": 24,
+    "Position": "Kapus",
+    "Team": "Újpest",
+    "Value": 400000,
+    "ContractUntil": "2025-06-30T00:00:00",
+    "IsNationalTeamPlayer": false,
+    "Nationality": "Magyar"
+  },
+  {
+    "Id": 9,
+    "Name": "Szûcs Lajos",
+    "Age": 29,
+    "Position": "Kapus",
+    "Team": "Mezõkövesd",
+    "Value": 350000,
+    "ContractUntil": "2024-06-30T00:00:00",
+    "IsNationalTeamPlayer": false,
+    "Nationality": "Magyar"
+  },
+  {
+    "Id": 10,
+    "Name": "Kovács Milán",
+    "Age": 23,
+    "Position": "Kapus",
+    "Team": "Zalaegerszeg",
+    "Value": 450000,
+    "ContractUntil": "2026-06-30T00:00:00",
+    "IsNationalTeamPlayer": false,
+    "Nationality": "Magyar"
+  }
+]
