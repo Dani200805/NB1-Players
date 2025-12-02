@@ -7,14 +7,15 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace NB1_Players
 {
     public partial class MainWindow : Window
     {
         private PlayerDataService _dataService;
-        private List<Player> _currentPlayers;
-        private Player _selectedPlayer;
+        private List<Player> _currentPlayers = new List<Player>();
+        private Player? _selectedPlayer;
 
         public MainWindow()
         {
@@ -22,11 +23,49 @@ namespace NB1_Players
             _dataService = new PlayerDataService();
             LoadData();
             InitializeForm();
+
+            SearchTextBox.GotFocus += SearchTextBox_GotFocus;
+            SearchTextBox.LostFocus += SearchTextBox_LostFocus;
+            SetSearchWatermark();
+        }
+        private void SetSearchWatermark()
+        {
+            if (string.IsNullOrEmpty(SearchTextBox.Text))
+            {
+                SearchTextBox.Text = "Keresés...";
+                SearchTextBox.Foreground = Brushes.Gray;
+            }
+        }
+
+        private void SearchTextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (SearchTextBox.Text == "Keresés...")
+            {
+                SearchTextBox.Text = "";
+                SearchTextBox.Foreground = Brushes.Black;
+            }
+        }
+
+        private void SearchTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(SearchTextBox.Text))
+            {
+                SearchTextBox.Text = "Keresés...";
+                SearchTextBox.Foreground = Brushes.Gray;
+            }
         }
 
         private void LoadData()
         {
-            _currentPlayers = _dataService.GetAllPlayers();
+            var players = _dataService.GetAllPlayers();
+            if (players != null)
+            {
+                _currentPlayers = players;
+            }
+            else
+            {
+                _currentPlayers = new List<Player>();
+            }
             RefreshPlayerList();
         }
 
@@ -35,14 +74,16 @@ namespace NB1_Players
             TeamComboBox.ItemsSource = _dataService.GetTeams();
             PositionComboBox.ItemsSource = _dataService.GetPositions();
             NationalityComboBox.ItemsSource = _dataService.GetNationalities();
-            ContractDatePicker.SelectedDate = DateTime.Now.AddYears(1);
             ClearForm();
         }
 
         private void RefreshPlayerList()
         {
-            PlayersListBox.ItemsSource = null;
-            PlayersListBox.ItemsSource = _currentPlayers;
+            if (PlayersListBox != null)
+            {
+                PlayersListBox.ItemsSource = null;
+                PlayersListBox.ItemsSource = _currentPlayers ?? new List<Player>();
+            }
         }
 
         private void ClearForm()
@@ -53,8 +94,6 @@ namespace NB1_Players
             TeamComboBox.Text = string.Empty;
             ValueTextBox.Text = string.Empty;
             NationalityComboBox.Text = string.Empty;
-            ContractDatePicker.SelectedDate = DateTime.Now.AddYears(1);
-            NationalTeamCheckBox.IsChecked = false;
 
             UpdateButton.IsEnabled = false;
             DeleteButton.IsEnabled = false;
@@ -62,13 +101,22 @@ namespace NB1_Players
             DetailsPanel.Visibility = Visibility.Collapsed;
         }
 
-        private void ShowPlayerDetails(Player player)
+        private void ShowPlayerDetails(Player? player)
         {
             if (player != null)
             {
                 SelectedPlayerName.Text = player.Name;
-                SelectedPlayerDetails.Text = $"{player.Name}\nCsapat: {player.Team}\nPoszt: {player.Position}\nKor: {player.Age} év\nNemzetiség: {player.Nationality}\nPiaci érték: {player.Value:C0}\nSzerződés lejárta: {player.ContractUntil:yyyy.MM.dd.}\nVálogatott: {(player.IsNationalTeamPlayer ? "Igen" : "Nem")}";
+                SelectedPlayerDetails.Text = $"🏷️ Név: {player.Name}\n" +
+                                            $"🏟️ Csapat: {player.Team}\n" +
+                                            $"🎯 Poszt: {player.Position}\n" +
+                                            $"🎂 Kor: {player.Age} év\n" +
+                                            $"🌍 Nemzetiség: {player.Nationality}\n" +
+                                            $"💰 Piaci érték: {player.Value:C0}";
                 DetailsPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                DetailsPanel.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -79,22 +127,24 @@ namespace NB1_Players
                 string.IsNullOrWhiteSpace(PositionComboBox.Text) ||
                 string.IsNullOrWhiteSpace(TeamComboBox.Text) ||
                 string.IsNullOrWhiteSpace(ValueTextBox.Text) ||
-                string.IsNullOrWhiteSpace(NationalityComboBox.Text) ||
-                ContractDatePicker.SelectedDate == null)
+                string.IsNullOrWhiteSpace(NationalityComboBox.Text))
             {
-                MessageBox.Show("Kérem töltse ki az összes kötelező mezőt!", "Hiányzó adatok", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Kérem töltse ki az összes kötelező mezőt!", "Hiányzó adatok",
+                              MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
 
             if (!int.TryParse(AgeTextBox.Text, out int age) || age < 16 || age > 50)
             {
-                MessageBox.Show("Érvényes kort adjon meg (16-50)!", "Érvénytelen kor", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Érvényes kort adjon meg (16-50)!", "Érvénytelen kor",
+                              MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
 
             if (!decimal.TryParse(ValueTextBox.Text, out decimal value) || value < 0)
             {
-                MessageBox.Show("Érvényes piaci értéket adjon meg!", "Érvénytelen érték", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Érvényes piaci értéket adjon meg!", "Érvénytelen érték",
+                              MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
 
@@ -111,9 +161,7 @@ namespace NB1_Players
                 Position = PositionComboBox.Text.Trim(),
                 Team = TeamComboBox.Text.Trim(),
                 Value = decimal.Parse(ValueTextBox.Text),
-                Nationality = NationalityComboBox.Text.Trim(),
-                ContractUntil = ContractDatePicker.SelectedDate.Value,
-                IsNationalTeamPlayer = NationalTeamCheckBox.IsChecked ?? false
+                Nationality = NationalityComboBox.Text.Trim()
             };
         }
 
@@ -129,8 +177,6 @@ namespace NB1_Players
                 TeamComboBox.Text = _selectedPlayer.Team;
                 ValueTextBox.Text = _selectedPlayer.Value.ToString();
                 NationalityComboBox.Text = _selectedPlayer.Nationality;
-                ContractDatePicker.SelectedDate = _selectedPlayer.ContractUntil;
-                NationalTeamCheckBox.IsChecked = _selectedPlayer.IsNationalTeamPlayer;
 
                 UpdateButton.IsEnabled = true;
                 DeleteButton.IsEnabled = true;
@@ -147,15 +193,20 @@ namespace NB1_Players
 
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(SearchTextBox.Text))
+            if (string.IsNullOrWhiteSpace(SearchTextBox.Text) || SearchTextBox.Text == "Keresés...")
             {
                 RefreshPlayerList();
+            }
+            else
+            {
+                SearchTextBox.Foreground = Brushes.Black;
             }
         }
 
         private void ShowAllButton_Click(object sender, RoutedEventArgs e)
         {
-            SearchTextBox.Text = string.Empty;
+            SearchTextBox.Text = "Keresés...";
+            SearchTextBox.Foreground = Brushes.Gray;
             RefreshPlayerList();
         }
 
@@ -174,7 +225,8 @@ namespace NB1_Players
                 _dataService.AddPlayer(newPlayer);
                 LoadData();
                 ClearForm();
-                MessageBox.Show("Játékos sikeresen hozzáadva!", "Siker", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show($"✅ {newPlayer.Name} sikeresen hozzáadva!", "Siker",
+                              MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
@@ -186,7 +238,8 @@ namespace NB1_Players
                 _dataService.UpdatePlayer(updatedPlayer);
                 LoadData();
                 ClearForm();
-                MessageBox.Show("Játékos adatai sikeresen frissítve!", "Siker", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show($"✅ {updatedPlayer.Name} adatai frissítve!", "Siker",
+                              MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
@@ -194,13 +247,18 @@ namespace NB1_Players
         {
             if (_selectedPlayer != null)
             {
-                var result = MessageBox.Show($"Biztosan törölni szeretné a(z) {_selectedPlayer.Name} játékost?", "Törlés megerősítése", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                var result = MessageBox.Show($"Biztosan törölni szeretné a(z) {_selectedPlayer.Name} játékost?",
+                                           "⚠️ Törlés megerősítése",
+                                           MessageBoxButton.YesNo,
+                                           MessageBoxImage.Question);
+
                 if (result == MessageBoxResult.Yes)
                 {
                     _dataService.DeletePlayer(_selectedPlayer.Id);
                     LoadData();
                     ClearForm();
-                    MessageBox.Show("Játékos sikeresen törölve!", "Siker", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show($"🗑️ {_selectedPlayer.Name} sikeresen törölve!", "Siker",
+                                  MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
         }
@@ -215,102 +273,160 @@ namespace NB1_Players
     public class Player
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         public int Age { get; set; }
-        public string Position { get; set; }
-        public string Team { get; set; }
+        public string Position { get; set; } = string.Empty;
+        public string Team { get; set; } = string.Empty;
         public decimal Value { get; set; }
-        public DateTime ContractUntil { get; set; }
-        public bool IsNationalTeamPlayer { get; set; }
-        public string Nationality { get; set; }
+        public string Nationality { get; set; } = string.Empty;
     }
 
     public class PlayerDataService
+{
+    private readonly string _filePath = "players.json";
+    private readonly string _defaultFilePath = "defaultPlayers.json";
+    private List<Player> _players;
+
+    public PlayerDataService()
     {
-        private readonly string _filePath = "players.json";
-        private List<Player> _players;
+        _players = new List<Player>();
+        LoadPlayers();
+    }
 
-        public PlayerDataService()
+    private void LoadPlayers()
+    {
+        try
         {
-            LoadPlayers();
-        }
-
-        private void LoadPlayers()
-        {
-            if (File.Exists(_filePath))
+            if (File.Exists(_defaultFilePath))
             {
-                try
+                string defaultJson = File.ReadAllText(_defaultFilePath);
+                var defaultPlayers = JsonSerializer.Deserialize<List<Player>>(defaultJson);
+                
+                if (defaultPlayers != null && defaultPlayers.Count > 0)
                 {
-                    string json = File.ReadAllText(_filePath);
-                    _players = JsonSerializer.Deserialize<List<Player>>(json);
-                }
-                catch
-                {
-                    _players = new List<Player>();
+                    _players = defaultPlayers;
+                    
+                    if (File.Exists(_filePath))
+                    {
+                        File.Delete(_filePath);
+                    }
+                    
+                    SavePlayers();
+                    return;
                 }
             }
-            else
+        }
+        catch
+        {
+        }
+
+        if (File.Exists(_filePath))
+        {
+            try
             {
-                _players = new List<Player>();
+                string json = File.ReadAllText(_filePath);
+                var players = JsonSerializer.Deserialize<List<Player>>(json);
+                if (players != null)
+                {
+                    _players = players;
+                    return;
+                }
+            }
+            catch
+            {
             }
         }
 
-        private void SavePlayers()
+        _players = new List<Player>();
+    }
+
+    private void SavePlayers()
+    {
+        try
         {
             string json = JsonSerializer.Serialize(_players, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(_filePath, json);
         }
-
-        public List<Player> GetAllPlayers() => _players;
-
-        public List<string> GetTeams() => _players.Select(p => p.Team).Distinct().ToList();
-        public List<string> GetPositions() => _players.Select(p => p.Position).Distinct().ToList();
-        public List<string> GetNationalities() => _players.Select(p => p.Nationality).Distinct().ToList();
-
-        public void AddPlayer(Player player)
+        catch
         {
-            player.Id = _players.Count > 0 ? _players.Max(p => p.Id) + 1 : 1;
-            _players.Add(player);
-            SavePlayers();
-        }
-
-        public void UpdatePlayer(Player player)
-        {
-            var existingPlayer = _players.FirstOrDefault(p => p.Id == player.Id);
-            if (existingPlayer != null)
-            {
-                existingPlayer.Name = player.Name;
-                existingPlayer.Age = player.Age;
-                existingPlayer.Position = player.Position;
-                existingPlayer.Team = player.Team;
-                existingPlayer.Value = player.Value;
-                existingPlayer.ContractUntil = player.ContractUntil;
-                existingPlayer.IsNationalTeamPlayer = player.IsNationalTeamPlayer;
-                existingPlayer.Nationality = player.Nationality;
-                SavePlayers();
-            }
-        }
-
-        public void DeletePlayer(int id)
-        {
-            var player = _players.FirstOrDefault(p => p.Id == id);
-            if (player != null)
-            {
-                _players.Remove(player);
-                SavePlayers();
-            }
-        }
-
-        public List<Player> SearchPlayers(string searchTerm)
-        {
-            if (string.IsNullOrWhiteSpace(searchTerm))
-                return _players;
-
-            return _players.Where(p =>
-                p.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                p.Team.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                p.Position.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
-            ).ToList();
         }
     }
+
+    public List<Player> GetAllPlayers() => _players ?? new List<Player>();
+
+    public List<string> GetTeams()
+    {
+        var teams = _players.Select(p => p.Team).Distinct().ToList();
+        if (teams.Count == 0)
+        {
+            teams = new List<string> { "DVSC", "FTC", "Paks", "Várda", "ETO", "PAFC", "MTK", "Zalaegerszeg", "Újpest", "Diósgyőr", "Nyíregyháza", "Kazincbarcika" };
+        }
+        return teams;
+    }
+
+    public List<string> GetPositions()
+    {
+        var positions = _players.Select(p => p.Position).Distinct().ToList();
+        if (positions.Count == 0)
+        {
+            positions = new List<string> { "Kapus", "Jobbhátvéd", "Balhátvéd", "Középhátvéd", "Védekező középpályás", "Középpályás", "Jobbszélső", "Balszélső", "Támadó középpályás", "Csatár" };
+        }
+        return positions;
+    }
+
+    public List<string> GetNationalities()
+    {
+        var nationalities = _players.Select(p => p.Nationality).Distinct().ToList();
+        if (nationalities.Count == 0)
+        {
+            nationalities = new List<string> { "Magyar", "Szerb", "Horvát", "Román", "Szlovén", "Szlovák", "Boszniai", "Montenegrói", "Orosz" };
+        }
+        return nationalities;
+    }
+
+    public void AddPlayer(Player player)
+    {
+        player.Id = _players.Count > 0 ? _players.Max(p => p.Id) + 1 : 1;
+        _players.Add(player);
+        SavePlayers();
+    }
+
+    public void UpdatePlayer(Player player)
+    {
+        var existingPlayer = _players.FirstOrDefault(p => p.Id == player.Id);
+        if (existingPlayer != null)
+        {
+            existingPlayer.Name = player.Name;
+            existingPlayer.Age = player.Age;
+            existingPlayer.Position = player.Position;
+            existingPlayer.Team = player.Team;
+            existingPlayer.Value = player.Value;
+            existingPlayer.Nationality = player.Nationality;
+            SavePlayers();
+        }
+    }
+
+    public void DeletePlayer(int id)
+    {
+        var player = _players.FirstOrDefault(p => p.Id == id);
+        if (player != null)
+        {
+            _players.Remove(player);
+            SavePlayers();
+        }
+    }
+
+    public List<Player> SearchPlayers(string searchTerm)
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm) || searchTerm == "Keresés...")
+            return _players;
+
+        return _players.Where(p =>
+            p.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+            p.Team.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+            p.Position.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+            p.Nationality.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+        ).ToList();
+    }
+}
 }
