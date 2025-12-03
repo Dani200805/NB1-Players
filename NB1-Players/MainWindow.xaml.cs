@@ -232,34 +232,56 @@ namespace NB1_Players
 
         private void UpdateButton_Click(object sender, RoutedEventArgs e)
         {
+            if (_selectedPlayer == null)
+            {
+                MessageBox.Show("Kérem válasszon ki egy játékost a szerkesztéshez!",
+                              "Nincs kiválasztott játékos",
+                              MessageBoxButton.OK,
+                              MessageBoxImage.Warning);
+                return;
+            }
+
             if (_selectedPlayer != null && ValidateForm())
             {
                 var updatedPlayer = GetPlayerFromForm();
                 _dataService.UpdatePlayer(updatedPlayer);
                 LoadData();
                 ClearForm();
-                MessageBox.Show($"✅ {updatedPlayer.Name} adatai frissítve!", "Siker",
-                              MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show($"{updatedPlayer.Name} adatai frissítve!",
+                              "Siker",
+                              MessageBoxButton.OK,
+                              MessageBoxImage.Information);
             }
         }
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            if (_selectedPlayer != null)
+            if (_selectedPlayer == null)
             {
-                var result = MessageBox.Show($"Biztosan törölni szeretné a(z) {_selectedPlayer.Name} játékost?",
-                                           "⚠️ Törlés megerősítése",
-                                           MessageBoxButton.YesNo,
-                                           MessageBoxImage.Question);
+                MessageBox.Show("Kérem válasszon ki egy játékost a törléshez!",
+                              "Nincs kiválasztott játékos",
+                              MessageBoxButton.OK,
+                              MessageBoxImage.Warning);
+                return;
+            }
 
-                if (result == MessageBoxResult.Yes)
-                {
-                    _dataService.DeletePlayer(_selectedPlayer.Id);
-                    LoadData();
-                    ClearForm();
-                    MessageBox.Show($"🗑️ {_selectedPlayer.Name} sikeresen törölve!", "Siker",
-                                  MessageBoxButton.OK, MessageBoxImage.Information);
-                }
+            var playerNameToDelete = _selectedPlayer.Name;
+
+            var result = MessageBox.Show($"Biztosan törölni szeretné a(z) {playerNameToDelete} játékost?",
+                                       "⚠️ Törlés megerősítése",
+                                       MessageBoxButton.YesNo,
+                                       MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                _dataService.DeletePlayer(_selectedPlayer.Id);
+                LoadData();
+                ClearForm();
+
+                MessageBox.Show($"{playerNameToDelete} sikeresen törölve!",
+                              "Siker",
+                              MessageBoxButton.OK,
+                              MessageBoxImage.Information);
             }
         }
 
@@ -374,17 +396,63 @@ namespace NB1_Players
         return positions;
     }
 
-    public List<string> GetNationalities()
-    {
-        var nationalities = _players.Select(p => p.Nationality).Distinct().ToList();
-        if (nationalities.Count == 0)
+        public List<string> GetNationalities()
         {
-            nationalities = new List<string> { "Magyar", "Szerb", "Horvát", "Román", "Szlovén", "Szlovák", "Boszniai", "Montenegrói", "Orosz" };
-        }
-        return nationalities;
-    }
+            var nationalities = new List<string>
+    {
+        "Afganisztán", "Albánia", "Algéria", "Andorra", "Angola",
+        "Antigua és Barbuda", "Argentína", "Örményország", "Ausztrália",
+        "Ausztria", "Azerbajdzsán", "Bahamák", "Bahrein", "Banglades",
+        "Barbados", "Fehéroroszország", "Belgium", "Belize", "Benin",
+        "Bhután", "Bolívia", "Bosznia és Hercegovina", "Botswana",
+        "Brazília", "Brunei", "Bulgária", "Burkina Faso", "Burundi",
+        "Kambodzsa", "Kamerun", "Kanada", "Zöld-foki-szigetek",
+        "Közép-afrikai Köztársaság", "Csád", "Chile", "Kína",
+        "Kolumbia", "Comore-szigetek", "Kongói Köztársaság",
+        "Kongói Demokratikus Köztársaság", "Costa Rica", "Cote d'Ivoire",
+        "Horvátország", "Kuba", "Ciprus", "Cseh Köztársaság",
+        "Dánia", "Dzsibuti", "Dominika", "Dominikai Köztársaság",
+        "Kelet-Timor (Timor-Leste)", "Ecuador", "Egyiptom",
+        "El Salvador", "Egyenlítői Guinea", "Eritrea", "Észtország",
+        "Etiópia", "Fidzsi", "Finnország", "Franciaország",
+        "Gabon", "Gambia", "Grúzia", "Németország", "Ghána",
+        "Görögország", "Grenada", "Guatemala", "Guinea",
+        "Bissau-Guinea", "Guyana", "Haiti", "Honduras", "Magyarország",
+        "Izland", "India", "Indonézia", "Irán", "Irak", "Írország",
+        "Izrael", "Olaszország", "Jamaica", "Japán", "Jordánia",
+        "Kazahsztán", "Kenya", "Kiribati", "Észak-Korea",
+        "Dél-Korea", "Koszovó", "Kuvait", "Kirgizisztán", "Laosz",
+        "Lettország", "Libanon", "Lesotho", "Libéria", "Líbia",
+        "Liechtenstein", "Litvánia", "Luxemburg", "Macedónia",
+        "Madagaszkár", "Malawi", "Malajzia", "Maldív-szigetek",
+        "Mali", "Málta", "Marshall-szigetek", "Mauritánia",
+        "Mauritius", "Mexikó", "Mikronéziai Szövetségi Államok",
+        "Moldova", "Monaco", "Mongólia", "Montenegró", "Marokkó",
+        "Mozambik", "Mianmar (Burma)", "Namíbia", "Nauru", "Nepál",
+        "Hollandia", "Új-Zéland", "Nicaragua", "Niger", "Nigéria",
+        "Norvégia", "Omán", "Pakisztán", "Palau", "Panama",
+        "Pápua Új-Guinea", "Paraguay", "Peru", "Fülöp-szigetek",
+        "Lengyelország", "Portugália", "Katar", "Románia",
+        "Oroszország", "Ruanda", "Saint Kitts és Nevis", "Santa Lucia",
+        "Saint Vincent és és a Grenadine-szigetek", "Szamoa",
+        "San Marino", "São Tomé és Príncipe", "Szaúd-Arábia",
+        "Szenegál", "Szerbia", "Seychelle-szigetek", "Sierra Leone",
+        "Szingapúr", "Szlovákia", "Szlovénia", "Salamon-szigetek",
+        "Szomália", "Dél-Afrika", "Dél-Szudán", "Spanyolország",
+        "Srí Lanka", "Szudán", "Suriname", "Szváziföld", "Svédország",
+        "Svájc", "Szíria", "Tajvan", "Tádzsikisztán", "Tanzánia",
+        "Thaiföld", "Togo", "Tonga", "Trinidad és Tobago",
+        "Tunézia", "Törökország", "Türkmenisztán", "Tuvalu",
+        "Uganda", "Ukrajna", "Egyesült Arab Emírségek",
+        "Egyesült Királyság", "Egyesült Államok", "Uruguay",
+        "Üzbegisztán", "Vanuatu", "Vatikán (Vatikánváros) (Holy See)",
+        "Venezuela", "Vietnam", "Jemen", "Zambia", "Zimbabwe"
+    };
 
-    public void AddPlayer(Player player)
+            return nationalities.OrderBy(n => n).ToList();
+        }
+
+        public void AddPlayer(Player player)
     {
         player.Id = _players.Count > 0 ? _players.Max(p => p.Id) + 1 : 1;
         _players.Add(player);
