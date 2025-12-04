@@ -268,5 +268,276 @@
     "Team": "Kazincbarcika",
     "Value": 350000,
     "Nationality": "Magyar"
+  },
+
+  {
+    "Id": 31,
+    "Name": "Baráth Péter",
+    "Age": 22,
+    "Position": "Középpályás",
+    "Team": "DVSC",
+    "Value": 950000,
+    "Nationality": "Magyar"
+  },
+  {
+    "Id": 32,
+    "Name": "Babic Drazen",
+    "Age": 27,
+    "Position": "Középhátvéd",
+    "Team": "Kisvárda",
+    "Value": 1200000,
+    "Nationality": "Horvát"
+  },
+  {
+    "Id": 33,
+    "Name": "Murka Szilveszter",
+    "Age": 24,
+    "Position": "Jobbszélső",
+    "Team": "DVSC",
+    "Value": 600000,
+    "Nationality": "Magyar"
+  },
+  {
+    "Id": 34,
+    "Name": "Sós Bence",
+    "Age": 31,
+    "Position": "Balhátvéd",
+    "Team": "Diósgyőr",
+    "Value": 700000,
+    "Nationality": "Magyar"
+  },
+  {
+    "Id": 35,
+    "Name": "Szabó László",
+    "Age": 25,
+    "Position": "Középpályás",
+    "Team": "PAFC",
+    "Value": 800000,
+    "Nationality": "Magyar"
+  },
+  {
+    "Id": 36,
+    "Name": "Hernandez Carlos",
+    "Age": 29,
+    "Position": "Balhátvéd",
+    "Team": "Újpest",
+    "Value": 950000,
+    "Nationality": "Spanyol"
+  },
+  {
+    "Id": 37,
+    "Name": "Toma Márk",
+    "Age": 23,
+    "Position": "Csatár",
+    "Team": "ETO",
+    "Value": 650000,
+    "Nationality": "Magyar"
+  },
+  {
+    "Id": 38,
+    "Name": "Bali Zoltán",
+    "Age": 30,
+    "Position": "Középhátvéd",
+    "Team": "MTK",
+    "Value": 1000000,
+    "Nationality": "Magyar"
+  },
+  {
+    "Id": 39,
+    "Name": "Fekete Máté",
+    "Age": 27,
+    "Position": "Kapus",
+    "Team": "Újpest",
+    "Value": 850000,
+    "Nationality": "Magyar"
+  },
+  {
+    "Id": 40,
+    "Name": "Ofori Samuel",
+    "Age": 26,
+    "Position": "Védekező középpályás",
+    "Team": "FTC",
+    "Value": 2200000,
+    "Nationality": "Ghánai"
+  },
+  {
+    "Id": 41,
+    "Name": "Kolomoets Ivan",
+    "Age": 28,
+    "Position": "Csatár",
+    "Team": "Kisvárda",
+    "Value": 850000,
+    "Nationality": "Ukrajnai"
+  },
+  {
+    "Id": 42,
+    "Name": "Szendrei Ákos",
+    "Age": 21,
+    "Position": "Középpályás",
+    "Team": "Paks",
+    "Value": 750000,
+    "Nationality": "Magyar"
+  },
+  {
+    "Id": 43,
+    "Name": "Iliev Marko",
+    "Age": 30,
+    "Position": "Középhátvéd",
+    "Team": "Zalaegerszeg",
+    "Value": 1300000,
+    "Nationality": "Bolgár"
+  },
+  {
+    "Id": 44,
+    "Name": "Hidi Patrik",
+    "Age": 33,
+    "Position": "Középpályás",
+    "Team": "Vasas",
+    "Value": 500000,
+    "Nationality": "Magyar"
+  },
+  {
+    "Id": 45,
+    "Name": "Nagy Viktor",
+    "Age": 24,
+    "Position": "Kapus",
+    "Team": "Kazincbarcika",
+    "Value": 400000,
+    "Nationality": "Magyar"
+  },
+  {
+    "Id": 46,
+    "Name": "Milojevic Stefan",
+    "Age": 23,
+    "Position": "Jobbhátvéd",
+    "Team": "Diósgyőr",
+    "Value": 700000,
+    "Nationality": "Szerb"
+  },
+  {
+    "Id": 47,
+    "Name": "Horváth Csongor",
+    "Age": 22,
+    "Position": "Balhátvéd",
+    "Team": "MTK",
+    "Value": 550000,
+    "Nationality": "Magyar"
+  },
+  {
+    "Id": 48,
+    "Name": "Szita Dénes",
+    "Age": 28,
+    "Position": "Csatár",
+    "Team": "Vasas",
+    "Value": 900000,
+    "Nationality": "Magyar"
+  },
+  {
+    "Id": 49,
+    "Name": "Marin Petar",
+    "Age": 26,
+    "Position": "Középpályás",
+    "Team": "FTC",
+    "Value": 1800000,
+    "Nationality": "Horvát"
+  },
+  {
+    "Id": 50,
+    "Name": "Rubio Daniel",
+    "Age": 29,
+    "Position": "Jobbszélső",
+    "Team": "Újpest",
+    "Value": 1200000,
+    "Nationality": "Spanyol"
+  },
+  {
+    "Id": 51,
+    "Name": "Tóth Olivér",
+    "Age": 20,
+    "Position": "Középpályás",
+    "Team": "Zalaegerszeg",
+    "Value": 450000,
+    "Nationality": "Magyar"
+  },
+  {
+    "Id": 52,
+    "Name": "Szalai Dominik",
+    "Age": 26,
+    "Position": "Középhátvéd",
+    "Team": "Nyíregyháza",
+    "Value": 650000,
+    "Nationality": "Magyar"
+  },
+  {
+    "Id": 53,
+    "Name": "Zubkov István",
+    "Age": 27,
+    "Position": "Csatár",
+    "Team": "FTC",
+    "Value": 3200000,
+    "Nationality": "Ukrán"
+  },
+  {
+    "Id": 54,
+    "Name": "Csontos Dávid",
+    "Age": 21,
+    "Position": "Balhátvéd",
+    "Team": "Paks",
+    "Value": 700000,
+    "Nationality": "Magyar"
+  },
+  {
+    "Id": 55,
+    "Name": "Mitrovic Danilo",
+    "Age": 25,
+    "Position": "Középpályás",
+    "Team": "DVSC",
+    "Value": 900000,
+    "Nationality": "Szerb"
+  },
+  {
+    "Id": 56,
+    "Name": "Eppel Márton",
+    "Age": 32,
+    "Position": "Csatár",
+    "Team": "Vasas",
+    "Value": 400000,
+    "Nationality": "Magyar"
+  },
+  {
+    "Id": 57,
+    "Name": "Kovacevic Luka",
+    "Age": 24,
+    "Position": "Kapus",
+    "Team": "Kisvárda",
+    "Value": 750000,
+    "Nationality": "Bosnyák"
+  },
+  {
+    "Id": 58,
+    "Name": "Noel Patrik",
+    "Age": 22,
+    "Position": "Balszélső",
+    "Team": "ETO",
+    "Value": 500000,
+    "Nationality": "Magyar"
+  },
+  {
+    "Id": 59,
+    "Name": "Kuti Szabolcs",
+    "Age": 28,
+    "Position": "Jobbhátvéd",
+    "Team": "MTK",
+    "Value": 850000,
+    "Nationality": "Magyar"
+  },
+  {
+    "Id": 60,
+    "Name": "Somi Dániel",
+    "Age": 30,
+    "Position": "Védekező középpályás",
+    "Team": "Zalaegerszeg",
+    "Value": 950000,
+    "Nationality": "Magyar"
   }
 ]
