@@ -7,12 +7,12 @@
 
     <Window.Resources>
         <SolidColorBrush x:Key="PrimaryBrush">#2c3e50</SolidColorBrush>
-        <SolidColorBrush x:Key="SecondaryBrush">#2ecc71</SolidColorBrush>
+        <SolidColorBrush x:Key="SecondaryBrush">#3498db</SolidColorBrush>
         <SolidColorBrush x:Key="AccentBrush">#e74c3c</SolidColorBrush>
         <SolidColorBrush x:Key="SuccessBrush">#2ecc71</SolidColorBrush>
-        <SolidColorBrush x:Key="WarningBrush">#2ecc71</SolidColorBrush>
+        <SolidColorBrush x:Key="WarningBrush">#f39c12</SolidColorBrush>
         <SolidColorBrush x:Key="LightBrush">#ffffff</SolidColorBrush>
-        <SolidColorBrush x:Key="DarkBrush">#ffffff</SolidColorBrush>
+        <SolidColorBrush x:Key="DarkBrush">#2c3e50</SolidColorBrush>
         <SolidColorBrush x:Key="GrayBrush">#7f8c8d</SolidColorBrush>
         <SolidColorBrush x:Key="LightBlueBrush">#ecf0f1</SolidColorBrush>
         <SolidColorBrush x:Key="LightGreenBrush">#d5f4e6</SolidColorBrush>
