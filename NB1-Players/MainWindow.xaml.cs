@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -28,6 +29,7 @@ namespace NB1_Players
             SearchTextBox.LostFocus += SearchTextBox_LostFocus;
             SetSearchWatermark();
         }
+
         private void SetSearchWatermark()
         {
             if (string.IsNullOrEmpty(SearchTextBox.Text))
@@ -241,7 +243,7 @@ namespace NB1_Players
                 return;
             }
 
-            if (_selectedPlayer != null && ValidateForm())
+            if (ValidateForm())
             {
                 var updatedPlayer = GetPlayerFromForm();
                 _dataService.UpdatePlayer(updatedPlayer);
@@ -304,197 +306,174 @@ namespace NB1_Players
     }
 
     public class PlayerDataService
-{
-    private readonly string _filePath = "players.json";
-    private readonly string _defaultFilePath = "defaultPlayers.json";
-    private List<Player> _players;
-
-    public PlayerDataService()
     {
-        _players = new List<Player>();
-        LoadPlayers();
-    }
+        private readonly string _defaultFilePath;
+        private List<Player> _players;
 
-    private void LoadPlayers()
-    {
-        try
+        public PlayerDataService()
         {
-            if (File.Exists(_defaultFilePath))
-            {
-                string defaultJson = File.ReadAllText(_defaultFilePath);
-                var defaultPlayers = JsonSerializer.Deserialize<List<Player>>(defaultJson);
-                
-                if (defaultPlayers != null && defaultPlayers.Count > 0)
-                {
-                    _players = defaultPlayers;
-                    
-                    if (File.Exists(_filePath))
-                    {
-                        File.Delete(_filePath);
-                    }
-                    
-                    SavePlayers();
-                    return;
-                }
-            }
-        }
-        catch
-        {
+            var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            _defaultFilePath = Path.Combine(baseDirectory, "defaultPlayers.json");
+
+            _players = new List<Player>();
+            LoadPlayersFromFile();
         }
 
-        if (File.Exists(_filePath))
+        private void LoadPlayersFromFile()
         {
             try
             {
-                string json = File.ReadAllText(_filePath);
-                var players = JsonSerializer.Deserialize<List<Player>>(json);
-                if (players != null)
+                if (File.Exists(_defaultFilePath))
                 {
-                    _players = players;
-                    return;
+                    string json = File.ReadAllText(_defaultFilePath, Encoding.UTF8);
+
+                    var players = JsonSerializer.Deserialize<List<Player>>(json, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                        Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                    });
+
+                    if (players != null)
+                    {
+                        _players = players;
+                    }
                 }
+            }
+            catch
+            {
+                _players = new List<Player>();
+            }
+        }
+
+        private void SavePlayersToFile()
+        {
+            try
+            {
+                var options = new JsonSerializerOptions
+                {
+                    WriteIndented = true,
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                };
+
+                string json = JsonSerializer.Serialize(_players, options);
+                File.WriteAllText(_defaultFilePath, json, Encoding.UTF8);
             }
             catch
             {
             }
         }
 
-        _players = new List<Player>();
-    }
+        public List<Player> GetAllPlayers() => _players;
 
-    private void SavePlayers()
-    {
-        try
+        public List<string> GetTeams()
         {
-            string json = JsonSerializer.Serialize(_players, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(_filePath, json);
+            return _players.Select(p => p.Team).Distinct().ToList();
         }
-        catch
-        {
-        }
-    }
 
-    public List<Player> GetAllPlayers() => _players ?? new List<Player>();
-
-    public List<string> GetTeams()
-    {
-        var teams = _players.Select(p => p.Team).Distinct().ToList();
-        if (teams.Count == 0)
+        public List<string> GetPositions()
         {
-            teams = new List<string> { "DVSC", "FTC", "Paks", "Várda", "ETO", "PAFC", "MTK", "Zalaegerszeg", "Újpest", "Diósgyőr", "Nyíregyháza", "Kazincbarcika" };
+            return _players.Select(p => p.Position).Distinct().ToList();
         }
-        return teams;
-    }
-
-    public List<string> GetPositions()
-    {
-        var positions = _players.Select(p => p.Position).Distinct().ToList();
-        if (positions.Count == 0)
-        {
-            positions = new List<string> { "Kapus", "Jobbhátvéd", "Balhátvéd", "Középhátvéd", "Védekező középpályás", "Középpályás", "Jobbszélső", "Balszélső", "Támadó középpályás", "Csatár" };
-        }
-        return positions;
-    }
 
         public List<string> GetNationalities()
         {
-            var nationalities = new List<string>
-    {
-        "Afganisztán", "Albánia", "Algéria", "Andorra", "Angola",
-        "Antigua és Barbuda", "Argentína", "Örményország", "Ausztrália",
-        "Ausztria", "Azerbajdzsán", "Bahamák", "Bahrein", "Banglades",
-        "Barbados", "Fehéroroszország", "Belgium", "Belize", "Benin",
-        "Bhután", "Bolívia", "Bosznia és Hercegovina", "Botswana",
-        "Brazília", "Brunei", "Bulgária", "Burkina Faso", "Burundi",
-        "Kambodzsa", "Kamerun", "Kanada", "Zöld-foki-szigetek",
-        "Közép-afrikai Köztársaság", "Csád", "Chile", "Kína",
-        "Kolumbia", "Comore-szigetek", "Kongói Köztársaság",
-        "Kongói Demokratikus Köztársaság", "Costa Rica", "Cote d'Ivoire",
-        "Horvátország", "Kuba", "Ciprus", "Cseh Köztársaság",
-        "Dánia", "Dzsibuti", "Dominika", "Dominikai Köztársaság",
-        "Kelet-Timor (Timor-Leste)", "Ecuador", "Egyiptom",
-        "El Salvador", "Egyenlítői Guinea", "Eritrea", "Észtország",
-        "Etiópia", "Fidzsi", "Finnország", "Franciaország",
-        "Gabon", "Gambia", "Grúzia", "Németország", "Ghána",
-        "Görögország", "Grenada", "Guatemala", "Guinea",
-        "Bissau-Guinea", "Guyana", "Haiti", "Honduras", "Magyarország",
-        "Izland", "India", "Indonézia", "Irán", "Irak", "Írország",
-        "Izrael", "Olaszország", "Jamaica", "Japán", "Jordánia",
-        "Kazahsztán", "Kenya", "Kiribati", "Észak-Korea",
-        "Dél-Korea", "Koszovó", "Kuvait", "Kirgizisztán", "Laosz",
-        "Lettország", "Libanon", "Lesotho", "Libéria", "Líbia",
-        "Liechtenstein", "Litvánia", "Luxemburg", "Macedónia",
-        "Madagaszkár", "Malawi", "Malajzia", "Maldív-szigetek",
-        "Mali", "Málta", "Marshall-szigetek", "Mauritánia",
-        "Mauritius", "Mexikó", "Mikronéziai Szövetségi Államok",
-        "Moldova", "Monaco", "Mongólia", "Montenegró", "Marokkó",
-        "Mozambik", "Mianmar (Burma)", "Namíbia", "Nauru", "Nepál",
-        "Hollandia", "Új-Zéland", "Nicaragua", "Niger", "Nigéria",
-        "Norvégia", "Omán", "Pakisztán", "Palau", "Panama",
-        "Pápua Új-Guinea", "Paraguay", "Peru", "Fülöp-szigetek",
-        "Lengyelország", "Portugália", "Katar", "Románia",
-        "Oroszország", "Ruanda", "Saint Kitts és Nevis", "Santa Lucia",
-        "Saint Vincent és és a Grenadine-szigetek", "Szamoa",
-        "San Marino", "São Tomé és Príncipe", "Szaúd-Arábia",
-        "Szenegál", "Szerbia", "Seychelle-szigetek", "Sierra Leone",
-        "Szingapúr", "Szlovákia", "Szlovénia", "Salamon-szigetek",
-        "Szomália", "Dél-Afrika", "Dél-Szudán", "Spanyolország",
-        "Srí Lanka", "Szudán", "Suriname", "Szváziföld", "Svédország",
-        "Svájc", "Szíria", "Tajvan", "Tádzsikisztán", "Tanzánia",
-        "Thaiföld", "Togo", "Tonga", "Trinidad és Tobago",
-        "Tunézia", "Törökország", "Türkmenisztán", "Tuvalu",
-        "Uganda", "Ukrajna", "Egyesült Arab Emírségek",
-        "Egyesült Királyság", "Egyesült Államok", "Uruguay",
-        "Üzbegisztán", "Vanuatu", "Vatikán (Vatikánváros) (Holy See)",
-        "Venezuela", "Vietnam", "Jemen", "Zambia", "Zimbabwe"
-    };
+            var allCountries = new List<string>
+        {
+            "Afganisztán", "Albánia", "Algéria", "Andorra", "Angola",
+            "Antigua és Barbuda", "Argentína", "Örményország", "Ausztrália",
+            "Ausztria", "Azerbajdzsán", "Bahamák", "Bahrein", "Banglades",
+            "Barbados", "Fehéroroszország", "Belgium", "Belize", "Benin",
+            "Bhután", "Bolívia", "Bosznia és Hercegovina", "Botswana",
+            "Brazília", "Brunei", "Bulgária", "Burkina Faso", "Burundi",
+            "Kambodzsa", "Kamerun", "Kanada", "Zöld-foki-szigetek",
+            "Közép-afrikai Köztársaság", "Csád", "Chile", "Kína",
+            "Kolumbia", "Comore-szigetek", "Kongói Köztársaság",
+            "Kongói Demokratikus Köztársaság", "Costa Rica", "Cote d'Ivoire",
+            "Horvátország", "Kuba", "Ciprus", "Cseh Köztársaság",
+            "Dánia", "Dzsibuti", "Dominika", "Dominikai Köztársaság",
+            "Kelet-Timor (Timor-Leste)", "Ecuador", "Egyiptom",
+            "El Salvador", "Egyenlítői Guinea", "Eritrea", "Észtország",
+            "Etiópia", "Fidzsi", "Finnország", "Franciaország",
+            "Gabon", "Gambia", "Grúzia", "Németország", "Ghána",
+            "Görögország", "Grenada", "Guatemala", "Guinea",
+            "Bissau-Guinea", "Guyana", "Haiti", "Honduras", "Magyarország",
+            "Izland", "India", "Indonézia", "Irán", "Irak", "Írország",
+            "Izrael", "Olaszország", "Jamaica", "Japán", "Jordánia",
+            "Kazahsztán", "Kenya", "Kiribati", "Észak-Korea",
+            "Dél-Korea", "Koszovó", "Kuvait", "Kirgizisztán", "Laosz",
+            "Lettország", "Libanon", "Lesotho", "Libéria", "Líbia",
+            "Liechtenstein", "Litvánia", "Luxemburg", "Macedónia",
+            "Madagaszkár", "Malawi", "Malajzia", "Maldív-szigetek",
+            "Mali", "Málta", "Marshall-szigetek", "Mauritánia",
+            "Mauritius", "Mexikó", "Mikronéziai Szövetségi Államok",
+            "Moldova", "Monaco", "Mongólia", "Montenegró", "Marokkó",
+            "Mozambik", "Mianmar (Burma)", "Namíbia", "Nauru", "Nepál",
+            "Hollandia", "Új-Zéland", "Nicaragua", "Niger", "Nigéria",
+            "Norvégia", "Omán", "Pakisztán", "Palau", "Panama",
+            "Pápua Új-Guinea", "Paraguay", "Peru", "Fülöp-szigetek",
+            "Lengyelország", "Portugália", "Katar", "Románia",
+            "Oroszország", "Ruanda", "Saint Kitts és Nevis", "Santa Lucia",
+            "Saint Vincent és és a Grenadine-szigetek", "Szamoa",
+            "San Marino", "São Tomé és Príncipe", "Szaúd-Arábia",
+            "Szenegál", "Szerbia", "Seychelle-szigetek", "Sierra Leone",
+            "Szingapúr", "Szlovákia", "Szlovénia", "Salamon-szigetek",
+            "Szomália", "Dél-Afrika", "Dél-Szudán", "Spanyolország",
+            "Srí Lanka", "Szudán", "Suriname", "Szváziföld", "Svédország",
+            "Svájc", "Szíria", "Tajvan", "Tádzsikisztán", "Tanzánia",
+            "Thaiföld", "Togo", "Tonga", "Trinidad és Tobago",
+            "Tunézia", "Törökország", "Türkmenisztán", "Tuvalu",
+            "Uganda", "Ukrajna", "Egyesült Arab Emírségek",
+            "Egyesült Királyság", "Egyesült Államok", "Uruguay",
+            "Üzbegisztán", "Vanuatu", "Vatikán (Vatikánváros) (Holy See)",
+            "Venezuela", "Vietnam", "Jemen", "Zambia", "Zimbabwe"
+        };
 
-            return nationalities.OrderBy(n => n).ToList();
+            return allCountries.OrderBy(n => n).ToList();
         }
 
         public void AddPlayer(Player player)
-    {
-        player.Id = _players.Count > 0 ? _players.Max(p => p.Id) + 1 : 1;
-        _players.Add(player);
-        SavePlayers();
-    }
-
-    public void UpdatePlayer(Player player)
-    {
-        var existingPlayer = _players.FirstOrDefault(p => p.Id == player.Id);
-        if (existingPlayer != null)
         {
-            existingPlayer.Name = player.Name;
-            existingPlayer.Age = player.Age;
-            existingPlayer.Position = player.Position;
-            existingPlayer.Team = player.Team;
-            existingPlayer.Value = player.Value;
-            existingPlayer.Nationality = player.Nationality;
-            SavePlayers();
+            player.Id = _players.Count > 0 ? _players.Max(p => p.Id) + 1 : 1;
+            _players.Add(player);
+            SavePlayersToFile();
+        }
+
+        public void UpdatePlayer(Player player)
+        {
+            var existingPlayer = _players.FirstOrDefault(p => p.Id == player.Id);
+            if (existingPlayer != null)
+            {
+                existingPlayer.Name = player.Name;
+                existingPlayer.Age = player.Age;
+                existingPlayer.Position = player.Position;
+                existingPlayer.Team = player.Team;
+                existingPlayer.Value = player.Value;
+                existingPlayer.Nationality = player.Nationality;
+                SavePlayersToFile();
+            }
+        }
+
+        public void DeletePlayer(int id)
+        {
+            var player = _players.FirstOrDefault(p => p.Id == id);
+            if (player != null)
+            {
+                _players.Remove(player);
+                SavePlayersToFile();
+            }
+        }
+
+        public List<Player> SearchPlayers(string searchTerm)
+        {
+            if (string.IsNullOrWhiteSpace(searchTerm) || searchTerm == "Keresés...")
+                return _players;
+
+            return _players.Where(p =>
+                p.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                p.Team.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                p.Position.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                p.Nationality.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+            ).ToList();
         }
     }
-
-    public void DeletePlayer(int id)
-    {
-        var player = _players.FirstOrDefault(p => p.Id == id);
-        if (player != null)
-        {
-            _players.Remove(player);
-            SavePlayers();
-        }
-    }
-
-    public List<Player> SearchPlayers(string searchTerm)
-    {
-        if (string.IsNullOrWhiteSpace(searchTerm) || searchTerm == "Keresés...")
-            return _players;
-
-        return _players.Where(p =>
-            p.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-            p.Team.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-            p.Position.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-            p.Nationality.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
-        ).ToList();
-    }
-}
 }
